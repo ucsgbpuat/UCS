@@ -1,25 +1,98 @@
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Calendar, MapPin, Clock, Users, ArrowRight } from "lucide-react";
 import { useLazyLoad } from "@/hooks/useLazyLoad";
 import { LazyLoadImage } from "@/components/LazyLoadImage";
+import { getBackendUri } from "@/lib/apiConfig";
+
+interface Event {
+  _id?: string;
+  id?: string;
+  title: string;
+  category: string;
+  date: string;
+  time: string;
+  venue: string;
+  description: string;
+  image: string;
+  attendees: number;
+  eventType: "upcoming" | "past";
+}
 
 const Events = () => {
-  const upcomingEvents = [
-    // {
-    //   id: 1,
-    //   title: "Nritya Utsav 2024",
-    //   category: "Dance Festival",
-    //   date: "March 15, 2024",
-    //   time: "6:00 PM - 10:00 PM",
-    //   venue: "Main Auditorium",
-    //   description: "A grand celebration of classical and folk dance forms from across India. Witness mesmerizing performances by renowned artists and our talented students.",
-    //   image: eventDance,
-    //   attendees: 500,
-    //   featured: true,
-    // },
-  ];
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const backendUri = getBackendUri();
+
+        // Fetch all events
+        const response = await fetch(`${backendUri}/api/events`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const data = await response.json();
+
+        const upcoming = data.filter((e: Event) => e.eventType === "upcoming");
+        const past = data.filter((e: Event) => e.eventType === "past");
+
+        setUpcomingEvents(upcoming);
+        setPastEvents(past);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred while fetching events");
+        console.error("Error fetching events:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading events...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="flex items-center justify-center py-32">
+          <div className="text-center max-w-md">
+            <p className="text-red-500 text-lg font-semibold mb-2">Error Loading Events</p>
+            <p className="text-muted-foreground">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,7 +155,7 @@ const Events = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingEvents.map((event, index) => (
                 <div
-                  key={event.id}
+                  key={event._id || event.id}
                   className="group royal-card bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/50 transition-all duration-500 hover:shadow-elegant animate-royal-slide-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -123,8 +196,6 @@ const Events = () => {
           )}
         </div>
       </section>
-
-      
 
       <Footer />
     </div>

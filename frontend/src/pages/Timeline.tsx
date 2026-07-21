@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { LazyLoadImage } from "@/components/LazyLoadImage";
+import { getBackendUri } from "@/lib/apiConfig";
 
 interface TimelineEvent {
+  _id?: string;
   year: string;
   title: string;
   description: string;
@@ -11,50 +14,46 @@ interface TimelineEvent {
 }
 
 const Timeline = () => {
-  const timelineEvents: TimelineEvent[] = [
-    {
-      year: "September 10, 2025",
-      title: "Pant Jayanti 2025",
-      description: "Honouring the legacy of Pandit Govind Ballabh Pant.",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/Pant%20Jayanti%202025/PantJayanti.webp",
-      side: "left",
-    },
-    {
-      year: "October 10, 2025",
-      title: "118th Kishan Mela",
-      description: "Celebrating the hands that nourish the nation",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/118th%20Kishan%20Mela/KishanMela.webp",
-      side: "right",
-    },
-    {
-      year: "November 12, 2025",
-      title: "Band Show 2025",
-      description: "Where music lights up the night and talent takes the stage.",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/Band%20Show%202025/BandShow.webp",
-      side: "left",
-    },
-    {
-      year: "November 15, 2025",
-      title: "Alumni Meet 2025",
-      description: "Reconnecting memories and strengthening bonds.",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/Alumni%20Meet%202025/alumni.webp",
-      side: "right",
-    },
-    {
-      year: "February 24, 2026",
-      title: "Inter University Sports Cultural Festival 2026",
-      description: "A vibrant celebration of diversity and creativity.",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/StateLevelSportsMeet/statelevel.webp",
-      side: "left",
-    },
-    {
-      year: "March 13, 2026",
-      title: "119th Kishan Mela",
-      description: "Celebrating the hands that nourish the nation",
-      image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/119th%20Kishan%20Mela/119th%20Kishan%20Mela.webp",
-      side: "right",
-    },
-  ];
+  const [timelineEvents, setTimelineEvents] = useState<TimelineEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPastEvents = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const backendUri = getBackendUri();
+
+        // Fetch past events from backend
+        const response = await fetch(`${backendUri}/api/events/type/past`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch past events");
+        }
+        const data = await response.json();
+
+        // Transform backend data to timeline format
+        const transformedEvents = data.map((event: any, index: number) => ({
+          _id: event._id,
+          year: event.date,
+          title: event.title,
+          description: event.description,
+          image: event.image,
+          side: index % 2 === 0 ? "left" : "right" as "left" | "right",
+        }));
+
+        setTimelineEvents(transformedEvents);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred while fetching timeline events");
+        console.error("Error fetching timeline events:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPastEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
