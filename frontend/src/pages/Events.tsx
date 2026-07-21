@@ -22,7 +22,6 @@ interface Event {
 
 const Events = () => {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-  const [pastEvents, setPastEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,18 +33,14 @@ const Events = () => {
 
         const backendUri = getBackendUri();
 
-        // Fetch all events
-        const response = await fetch(`${backendUri}/api/events`);
+        // Fetch upcoming events only
+        const response = await fetch(`${backendUri}/api/events/type/upcoming`);
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
         const data = await response.json();
 
-        const upcoming = data.filter((e: Event) => e.eventType === "upcoming");
-        const past = data.filter((e: Event) => e.eventType === "past");
-
-        setUpcomingEvents(upcoming);
-        setPastEvents(past);
+        setUpcomingEvents(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred while fetching events");
         console.error("Error fetching events:", err);
