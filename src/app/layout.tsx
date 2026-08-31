@@ -3,7 +3,7 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ucspantnagar.vercel.app/"), // Replace with your actual domain
+  metadataBase: new URL("https://ucspantnagar.in/"), // Replace with your actual domain
 
   title: {
     default: "University Cultural Society (UCS) | GBPUAT Pantnagar",
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://ucspantnagar.vercel.app/",
+    url: "https://ucspantnagar.in/",
     siteName: "University Cultural Society (UCS)",
     title: "University Cultural Society (UCS) | GBPUAT Pantnagar",
     description:
@@ -125,6 +125,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+      <meta
+        name="google-adsense-account"
+        content="ca-pub-8376992121359521"
+      />
+    </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         <Providers>{children}</Providers>
       </body>
