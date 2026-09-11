@@ -209,6 +209,10 @@
     animation: titleReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
+  .animate-team-image {
+    animation: teamImageReveal 1.8s ease-out both, teamImageDrift 18s ease-in-out 1.8s infinite alternate;
+  }
+
   .delay-100 { animation-delay: 0.1s; }
   .delay-200 { animation-delay: 0.2s; }
   .delay-300 { animation-delay: 0.3s; }
@@ -330,6 +334,26 @@
     opacity: 1;
     transform: translateY(0) skewY(0);
     letter-spacing: 0;
+  }
+}
+
+@keyframes teamImageReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes teamImageDrift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.04);
   }
 }
 

@@ -1,16 +1,13 @@
 "use client";
 
 import dancerSilhouette1 from "@/assets/dancer-silhouette-1.png";
-import dancerSilhouette2 from "@/assets/dancer-silhouette-2.png";
-import singerSilhouette1 from "@/assets/singer-silhouette-1.png";
-import singerSilhouette2 from "@/assets/singer-silhouette-2.png";
 import Link from "next/link";
 
 const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-butter-muted/30 via-background to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b" />
       
       {/* Decorative glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-30"
