@@ -6,6 +6,7 @@ export interface ITeamMember extends Document {
   college: string;
   imageUrl?: string;
   order: number;
+  isPast: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +18,7 @@ const teamMemberSchema = new Schema<ITeamMember>(
     college: { type: String, required: true, trim: true },
     imageUrl: { type: String, default: "" },
     order: { type: Number, default: 0 },
+    isPast: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

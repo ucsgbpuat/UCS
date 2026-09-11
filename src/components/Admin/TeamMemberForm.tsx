@@ -14,6 +14,7 @@ const TeamMemberForm = ({ initialData, onSubmit, onCancel }: TeamMemberFormProps
     role: "",
     college: "",
     imageUrl: "",
+    isPast: false,
   });
 
   useEffect(() => {
@@ -137,6 +138,19 @@ const TeamMemberForm = ({ initialData, onSubmit, onCancel }: TeamMemberFormProps
             className="w-full px-3 py-2 rounded-lg border border-border/50 bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+
+        <label className="md:col-span-2 flex items-center gap-3 text-sm text-foreground">
+          <input
+            type="checkbox"
+            name="isPast"
+            checked={Boolean(formData.isPast)}
+            onChange={(event) =>
+              setFormData((prev) => ({ ...prev, isPast: event.target.checked }))
+            }
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
+          />
+          Mark as past team member
+        </label>
       </div>
 
       <div className="flex gap-3 justify-end pt-4">

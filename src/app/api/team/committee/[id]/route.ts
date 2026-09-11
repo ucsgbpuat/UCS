@@ -16,7 +16,7 @@ export async function PUT(
     }
 
     const { id } = params;
-    const { name, role, college, imageUrl, order } = await req.json();
+    const { name, role, college, imageUrl, order, isPast } = await req.json();
 
     if (!name || !role || !college) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -25,7 +25,14 @@ export async function PUT(
     await dbConnect();
     const member = await TeamMember.findByIdAndUpdate(
       id,
-      { name, role, college, imageUrl, ...(typeof order === "number" ? { order } : {}) },
+      {
+        name,
+        role,
+        college,
+        imageUrl,
+        ...(typeof order === "number" ? { order } : {}),
+        ...(typeof isPast === "boolean" ? { isPast } : {}),
+      },
       { new: true }
     );
 

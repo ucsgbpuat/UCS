@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     await dbConnect();
-    const members = await TeamMember.find().sort({ order: 1, createdAt: -1 });
+    const members = await TeamMember.find({ isPast: { $ne: true } }).sort({ order: 1, createdAt: -1 });
     return NextResponse.json(members);
   } catch (error: any) {
     console.error("GET public committee error:", error);

@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
     }
 
-    const { name, role, college, imageUrl } = await req.json();
+    const { name, role, college, imageUrl, isPast } = await req.json();
 
     if (!name || !role || !college) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
       college,
       imageUrl,
       order: (lastMember?.order ?? -1) + 1,
+      isPast: Boolean(isPast),
     });
 
     await member.save();
