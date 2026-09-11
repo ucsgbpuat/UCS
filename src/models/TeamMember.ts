@@ -5,6 +5,7 @@ export interface ITeamMember extends Document {
   role: string;
   college: string;
   imageUrl?: string;
+  order: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ const teamMemberSchema = new Schema<ITeamMember>(
     role: { type: String, required: true, trim: true },
     college: { type: String, required: true, trim: true },
     imageUrl: { type: String, default: "" },
+    order: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

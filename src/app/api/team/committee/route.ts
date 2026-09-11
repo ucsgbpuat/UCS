@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     }
 
     await dbConnect();
-    const members = await TeamMember.find().sort({ createdAt: -1 });
+    const members = await TeamMember.find().sort({ order: 1, createdAt: -1 });
     return NextResponse.json(members);
   } catch (error: any) {
     console.error("GET committee error:", error);
@@ -35,11 +35,13 @@ export async function POST(req: Request) {
     }
 
     await dbConnect();
+    const lastMember = await TeamMember.findOne().sort({ order: -1 });
     const member = new TeamMember({
       name,
       role,
       college,
       imageUrl,
+      order: (lastMember?.order ?? -1) + 1,
     });
 
     await member.save();

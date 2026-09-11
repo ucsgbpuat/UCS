@@ -16,6 +16,7 @@ export interface TeamMember {
   role: string;
   college: string;
   imageUrl: string;
+  order?: number;
 }
 
 export interface StaffCounsellor {
@@ -172,6 +173,34 @@ const TeamManagement = () => {
     }
   };
 
+  const handleReorderMembers = async (members: TeamMember[]) => {
+    const previousMembers = coreCommittee;
+    setCoreCommittee(members);
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`${API_URL}/team/committee/reorder`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          memberIds: members.map((member) => member._id || member.id).filter(Boolean),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save team order");
+      }
+      toast.success("Team order updated");
+    } catch (err) {
+      setCoreCommittee(previousMembers);
+      toast.error("Could not save team order");
+      console.error(err);
+    }
+  };
+
   const handleEditMember = (member: TeamMember) => {
     setEditingMember(member);
     setShowMemberForm(true);
@@ -237,6 +266,7 @@ const TeamManagement = () => {
               members={coreCommittee}
               onEdit={handleEditMember}
               onDelete={handleDeleteMember}
+              onReorder={handleReorderMembers}
             />
           )}
         </TabsContent>

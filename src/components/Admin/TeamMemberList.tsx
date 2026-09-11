@@ -1,15 +1,20 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Users } from "lucide-react";
+import { Edit2, GripVertical, Trash2, Users } from "lucide-react";
 import { TeamMember } from "./TeamManagement";
 
 interface TeamMemberListProps {
   members: TeamMember[];
   onEdit: (member: TeamMember) => void;
   onDelete: (memberId: string) => void;
+  onReorder: (members: TeamMember[]) => void;
 }
 
-const TeamMemberList = ({ members, onEdit, onDelete }: TeamMemberListProps) => {
+const TeamMemberList = ({ members, onEdit, onDelete, onReorder }: TeamMemberListProps) => {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
   if (members.length === 0) {
     return (
       <Card className="border-border/50 bg-card/50">
@@ -23,10 +28,38 @@ const TeamMemberList = ({ members, onEdit, onDelete }: TeamMemberListProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {members.map((member) => (
+      {members.map((member, index) => (
         <Card
           key={member._id || member.id}
-          className="border-border/50 hover:border-primary/30 transition-all overflow-hidden"
+          draggable
+          onDragStart={() => setDraggedIndex(index)}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setDragOverIndex(index);
+          }}
+          onDragLeave={() => setDragOverIndex(null)}
+          onDrop={(event) => {
+            event.preventDefault();
+            if (draggedIndex === null || draggedIndex === index) {
+              setDraggedIndex(null);
+              setDragOverIndex(null);
+              return;
+            }
+
+            const reorderedMembers = [...members];
+            const [draggedMember] = reorderedMembers.splice(draggedIndex, 1);
+            reorderedMembers.splice(index, 0, draggedMember);
+            onReorder(reorderedMembers);
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+          }}
+          onDragEnd={() => {
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+          }}
+          className={`overflow-hidden border-border/50 transition-all hover:border-primary/30 ${
+            dragOverIndex === index ? "border-primary ring-2 ring-primary/30" : ""
+          } ${draggedIndex === index ? "opacity-50" : ""}`}
         >
           {member.imageUrl && (
             <img
@@ -39,7 +72,13 @@ const TeamMemberList = ({ members, onEdit, onDelete }: TeamMemberListProps) => {
             />
           )}
           <CardContent className="pt-4">
-            <h3 className="font-bold text-foreground mb-1">{member.name}</h3>
+            <div className="mb-1 flex items-start justify-between gap-3">
+              <h3 className="font-bold text-foreground">{member.name}</h3>
+              <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground" title="Drag to reorder">
+                <GripVertical className="h-4 w-4" />
+                Move
+              </span>
+            </div>
             <p className="text-sm text-primary font-medium mb-1">{member.role}</p>
             <p className="text-sm text-muted-foreground mb-4">{member.college}</p>
 
