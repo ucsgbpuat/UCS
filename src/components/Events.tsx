@@ -33,6 +33,11 @@ const pastEvents = [
     description: "Celebrating the hands that nourish the nation",
     image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/119th%20Kishan%20Mela/119th%20Kishan%20Mela.webp",
   },
+  {
+    title: "Pant Jayanti 2026",
+    description: "Honouring the legacy of Pandit Govind Ballabh Pant.",
+    image: "https://pub-b9cd201fbde6424783fdf034160caaab.r2.dev/ucs/events/pant_jayanti_2026.jpeg",
+  },
 ];
 
 const Events = () => {
