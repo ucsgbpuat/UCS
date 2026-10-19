@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import TeamMemberForm from "./TeamMemberForm";
 import TeamMemberList from "./TeamMemberList";
 import StaffCounsellorForm from "./StaffCounsellorForm";
@@ -205,7 +206,7 @@ const TeamManagement = () => {
 
   const handleEditMember = (member: TeamMember) => {
     setEditingMember(member);
-    setShowMemberForm(true);
+    setShowMemberForm(false);
   };
 
   return (
@@ -239,7 +240,7 @@ const TeamManagement = () => {
             </Button>
           </div>
 
-          {showMemberForm && (
+          {showMemberForm && !editingMember && (
             <Card className="border-primary/30 bg-card/50">
               <CardHeader>
                 <CardTitle>
@@ -367,6 +368,28 @@ const TeamManagement = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      <Dialog
+        open={!!editingMember}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingMember(null);
+          }
+        }}
+      >
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Member</DialogTitle>
+          </DialogHeader>
+          {editingMember && (
+            <TeamMemberForm
+              initialData={editingMember}
+              onSubmit={handleAddMember}
+              onCancel={() => setEditingMember(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
